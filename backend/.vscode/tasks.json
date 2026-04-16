@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start Financial Tracker",
+      "type": "shell",
+      "command": "cd backend && uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📊 Run Data Collectors Once",
+      "type": "shell",
+      "command": "cd backend && python -c \"from collectors.stocks import collect_all_market_data; from collectors.crypto import collect_crypto; from collectors.news import collect_all_news; collect_all_market_data(); collect_crypto(); collect_all_news()\"",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📱 Send Telegram Morning Summary",
+      "type": "shell",
+      "command": "cd backend && python -c \"import asyncio; from telegram_bot.bot import send_morning_summary; asyncio.run(send_morning_summary())\"",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔄 Run Scheduler (Background)",
+      "type": "shell",
+      "command": "cd backend && python scheduler.py",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🗄️ Reset Database",
+      "type": "shell",
+      "command": "cd backend && python -c \"import os; os.remove('financial_data.db') if os.path.exists('financial_data.db') else None; from database import init_db; init_db(); print('Database reset!')\"",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinTrack Pro — Personal Market Terminal</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── App Shell ─────────────────────────────────────────────────────────── -->
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">📈</span>
+      <span class="logo-text">FinTrack <span class="logo-pro">Pro</span></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">MARKETS</div>
+      <a class="nav-item active" data-page="overview"   onclick="navigateTo('overview')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Overview</span>
+      </a>
+      <a class="nav-item" data-page="india"     onclick="navigateTo('india')">
+        <span class="nav-icon">🇮🇳</span><span class="nav-label">Indian Markets</span>
+      </a>
+      <a class="nav-item" data-page="global"    onclick="navigateTo('global')">
+        <span class="nav-icon">🌍</span><span class="nav-label">Global Markets</span>
+      </a>
+      <a class="nav-item" data-page="commodities" onclick="navigateTo('commodities')">
+        <span class="nav-icon">🛢️</span><span class="nav-label">Commodities</span>
+      </a>
+      <a class="nav-item" data-page="forex"     onclick="navigateTo('forex')">
+        <span class="nav-icon">💱</span><span class="nav-label">Forex</span>
+      </a>
+      <a class="nav-item" data-page="crypto"    onclick="navigateTo('crypto')">
+        <span class="nav-icon">₿</span><span class="nav-label">Crypto</span>
+      </a>
+
+      <div class="nav-section-label">INTELLIGENCE</div>
+      <a class="nav-item" data-page="mood"      onclick="navigateTo('mood')">
+        <span class="nav-icon">🧠</span><span class="nav-label">Market Mood</span>
+      </a>
+      <a class="nav-item" data-page="sentiment" onclick="navigateTo('sentiment')">
+        <span class="nav-icon">📡</span><span class="nav-label">Sentiment</span>
+      </a>
+      <a class="nav-item" data-page="heatmap"   onclick="navigateTo('heatmap')">
+        <span class="nav-icon">🔥</span><span class="nav-label">Correlations</span>
+      </a>
+      <a class="nav-item" data-page="impact"    onclick="navigateTo('impact')">
+        <span class="nav-icon">⚡</span><span class="nav-label">Impact Analysis</span>
+      </a>
+      <a class="nav-item" data-page="aibrief" onclick="navigateTo('aibrief')">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">AI Brief</span>
+      </a>
+      <a class="nav-item" data-page="probability" onclick="navigateTo('probability')">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Probability</span>
+      </a>
+      <a class="nav-item" data-page="quant"
+        onclick="navigateTo('quant')">
+        <span class="nav-icon">🧮</span>
+        <span class="nav-label">Quant Signals</span>
+      </a>
+      <a class="nav-item" data-page="technical"
+        onclick="navigateTo('technical')">
+        <span class="nav-icon">📡</span>
+        <span class="nav-label">Technical Scan</span>
+      </a>
+
+      <div class="nav-section-label">DATA</div>
+      <a class="nav-item" data-page="news"      onclick="navigateTo('news')">
+        <span class="nav-icon">📰</span><span class="nav-label">News Feed</span>
+      </a>
+      <a class="nav-item" data-page="economic"  onclick="navigateTo('economic')">
+        <span class="nav-icon">📉</span><span class="nav-label">Economic Data</span>
+      </a>
+      <a class="nav-item" data-page="calendar"  onclick="navigateTo('calendar')">
+        <span class="nav-icon">📅</span><span class="nav-label">Calendar</span>
+      </a>
+      <a class="nav-item" data-page="portfolio" onclick="navigateTo('portfolio')">
+      <span class="nav-icon">💼</span>
+      <span class="nav-label">Portfolio</span>
+    </a>
+    <a class="nav-item" data-page="screener" onclick="navigateTo('screener')">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">Screener</span>
+    </a>
+    <a class="nav-item" data-page="watchlist"
+      onclick="navigateTo('watchlist')">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Watchlist</span>
+    </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="ws-indicator">
+        <span class="ws-dot" id="ws-dot"></span>
+        <span id="ws-status">Connecting...</span>
+      </div>
+      <div class="sidebar-clock" id="clock">--:--:--</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrapper">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-ticker" id="ticker">Loading...</div>
+      <div class="topbar-actions">
+        <button class="btn-icon" onclick="refreshAll()" title="Refresh">🔄</button>
+        <button class="btn-icon" onclick="navigateTo('mood')" title="Market Mood">🧠</button>
+      </div>
+    </header>
+
+    <!-- Page Container -->
+    <main class="page-container">
+
+      <!-- ── PAGE: OVERVIEW ─────────────────────────────────────────── -->
+      <div class="page active" id="page-overview">
+
+        <!-- Mood Banner -->
+        <div class="mood-banner" id="mood-banner">
+          <div class="mood-left">
+            <div class="mood-label">MARKET MOOD</div>
+            <div class="mood-score" id="mood-score-banner">--</div>
+            <div class="mood-tag" id="mood-tag-banner">Loading...</div>
+          </div>
+          <div class="mood-bar-wrap">
+            <div class="mood-bar">
+              <div class="mood-fill" id="mood-fill"></div>
+              <div class="mood-needle" id="mood-needle"></div>
+            </div>
+            <div class="mood-bar-labels">
+              <span>😨 Extreme Fear</span>
+              <span>😟 Fear</span>
+              <span>😐 Neutral</span>
+              <span>😊 Greed</span>
+              <span>🤑 Extreme Greed</span>
+            </div>
+          </div>
+          <div class="mood-right">
+            <div class="regime-badge" id="regime-badge">--</div>
+            <div class="regime-label">Market Regime</div>
+          </div>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-row" id="kpi-row"></div>
+
+        <!-- Two Column: India + Global -->
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-header">
+              <span>🇮🇳 Indian Markets</span>
+              <span class="panel-time" id="india-update">--</span>
+            </div>
+            <div class="asset-table" id="india-table"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <span>🌍 Global Indices</span>
+              <span class="panel-time" id="global-update">--</span>
+            </div>
+            <div class="asset-table" id="global-table"></div>
+          </div>
+        </div>
+
+        <!-- Three Column: Commodities, Forex, Crypto -->
+        <div class="three-col">
+          <div class="panel">
+            <div class="panel-header">🛢️ Commodities</div>
+            <div class="asset-table" id="commodity-table-overview"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">💱 Forex</div>
+            <div class="asset-table" id="forex-table-overview"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">₿ Crypto</div>
+            <div class="asset-table" id="crypto-table-overview"></div>
+          </div>
+        </div>
+
+        <!-- News + Impact -->
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-header">⚡ Active Impact Alerts</div>
+            <div id="impact-overview"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">📰 Latest News</div>
+            <div id="news-overview"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── PAGE: INDIA ────────────────────────────────────────────── -->
+      <div class="page" id="page-india">
+        <div class="page-title">🇮🇳 Indian Markets</div>
+        <div class="cards-grid" id="india-cards-full"></div>
+        <div class="two-col" style="margin-top:14px">
+          <div class="panel">
+            <div class="panel-header">📊 Top Gainers</div>
+            <div id="india-gainers"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">📉 Top Losers</div>
+            <div id="india-losers"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: GLOBAL ───────────────────────────────────────────── -->
+      <div class="page" id="page-global">
+        <div class="page-title">🌍 Global Markets</div>
+        <div class="cards-grid" id="global-cards-full"></div>
+        <div class="two-col" style="margin-top:14px">
+          <div class="panel">
+            <div class="panel-header">📊 Top Gainers</div>
+            <div id="global-gainers"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">📉 Top Losers</div>
+            <div id="global-losers"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: COMMODITIES ──────────────────────────────────────── -->
+      <div class="page" id="page-commodities">
+        <div class="page-title">🛢️ Commodities</div>
+        <div class="cards-grid" id="commodity-cards-full"></div>
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-header">📊 Commodities Detail</div>
+          <div id="commodity-detail"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: FOREX ────────────────────────────────────────────── -->
+      <div class="page" id="page-forex">
+        <div class="page-title">💱 Forex</div>
+        <div class="cards-grid" id="forex-cards-full"></div>
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-header">📊 Forex Detail</div>
+          <div id="forex-detail"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: CRYPTO ───────────────────────────────────────────── -->
+      <div class="page" id="page-crypto">
+        <div class="page-title">₿ Cryptocurrency</div>
+        <div class="cards-grid" id="crypto-cards-full"></div>
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-header">📊 Crypto Detail</div>
+          <div id="crypto-detail"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: MARKET MOOD ──────────────────────────────────────── -->
+      <div class="page" id="page-mood">
+        <div class="page-title">🧠 Market Mood Intelligence</div>
+        <div class="mood-full-grid">
+          <div class="panel mood-gauge-panel">
+            <div class="panel-header">Fear & Greed Index</div>
+            <canvas id="gauge-chart" width="340" height="200"></canvas>
+            <div class="gauge-score" id="gauge-score">--</div>
+            <div class="gauge-label" id="gauge-label">Loading...</div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">📊 Mood Components</div>
+            <div id="mood-components"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">🌐 Regime Detector</div>
+            <div id="regime-detail"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-header">📈 Mood History (Last 7 Days)</div>
+          <canvas id="mood-history-chart" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- ── PAGE: SENTIMENT ────────────────────────────────────────── -->
+      <div class="page" id="page-sentiment">
+        <div class="page-title">📡 News Sentiment Analysis</div>
+        <div class="sentiment-summary" id="sentiment-summary"></div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-header">📰 Articles with Sentiment Scores</div>
+          <div id="sentiment-news-list"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: HEATMAP ──────────────────────────────────────────── -->
+      <div class="page" id="page-heatmap">
+        <div class="page-title">🔥 Correlation Heatmap</div>
+        <div class="panel">
+          <div class="panel-header">
+            Asset Correlation Matrix
+            <span style="font-size:0.75rem;color:#7a8fa6;font-weight:400">
+              — Green = positive, Red = negative correlation
+            </span>
+          </div>
+          <div id="heatmap-container"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: IMPACT ───────────────────────────────────────────── -->
+      <div class="page" id="page-impact">
+        <div class="page-title">⚡ Global Impact Analysis</div>
+        <div class="panel">
+          <div class="panel-header">Active Impact Rules</div>
+          <div id="impact-full"></div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-header">📖 All Predefined Relationships</div>
+          <div id="rules-list"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: NEWS ─────────────────────────────────────────────── -->
+      <div class="page" id="page-news">
+        <div class="page-title">📰 News Intelligence Feed</div>
+        <div class="news-filter-bar">
+          <button class="filter-btn active" onclick="filterNews('all',this)">All</button>
+          <button class="filter-btn" onclick="filterNews('india',this)">🇮🇳 India</button>
+          <button class="filter-btn" onclick="filterNews('fed',this)">🏛️ Fed</button>
+          <button class="filter-btn" onclick="filterNews('commodity',this)">🛢️ Commodity</button>
+          <button class="filter-btn" onclick="filterNews('crypto',this)">₿ Crypto</button>
+          <button class="filter-btn" onclick="filterNews('global',this)">🌍 Global</button>
+          <button class="filter-btn" onclick="filterNews('forex',this)">💱 Forex</button>
+        </div>
+        <div id="news-full-list"></div>
+      </div>
+
+      <!-- ── PAGE: ECONOMIC ─────────────────────────────────────────── -->
+      <div class="page" id="page-economic">
+        <div class="page-title">📉 Economic Indicators</div>
+        <div class="cards-grid" id="economic-cards"></div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-header">🇺🇸 US Key Rates</div>
+          <canvas id="rates-chart" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- ── PAGE: CALENDAR ─────────────────────────────────────────── -->
+      <div class="page" id="page-calendar">
+        <div class="page-title">📅 Economic Calendar</div>
+        <div class="panel">
+          <div class="panel-header">Upcoming Events</div>
+          <div id="calendar-list"></div>
+        </div>
+      </div>
+      
+<!-- ── PAGE: AI BRIEF ─────────────────────────────────────────────────── -->
+<div class="page" id="page-aibrief">
+  <div class="page-title">🤖 AI Market Intelligence</div>
+
+  <!-- Daily Brief -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      📋 Daily Market Brief
+      <button class="btn-icon" onclick="loadAIBrief()" id="brief-btn">
+        ✨ Generate Brief
+      </button>
+    </div>
+    <div id="ai-brief-content">
+      <div style="padding:40px;text-align:center;color:var(--text-dim)">
+        <div style="font-size:2.5rem;margin-bottom:12px">🤖</div>
+        <div style="font-size:0.95rem;color:var(--text-sec)">
+          Get your AI-powered professional market analysis
+        </div>
+        <div style="font-size:0.78rem;margin-top:6px;color:var(--text-dim)">
+          Powered by Llama 3.3 70B via Groq (Free)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sentiment + Event Analyzer -->
+  <div class="two-col" style="margin-bottom:14px">
+
+    <!-- AI Sentiment Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        📡 Deep Sentiment Analysis
+        <button class="btn-icon" onclick="loadAISentiment()" id="sentiment-btn">
+          🔄 Analyze Now
+        </button>
+      </div>
+      <div id="ai-sentiment-content">
+        <div style="padding:30px;text-align:center;color:var(--text-dim)">
+          <div style="font-size:2rem;margin-bottom:8px">📡</div>
+          <div style="font-size:0.85rem">
+            Click Analyze for probability matrix & sector sentiment
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Impact Analyzer -->
+    <div class="panel">
+      <div class="panel-header">⚡ Event Impact Analyzer</div>
+      <div style="padding:16px">
+        <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:10px">
+          Describe any event — AI will analyze its impact on Indian markets
+        </div>
+        <!-- Quick event buttons -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            Fed Rate Hike 25bps
+          </span>
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            Oil Spikes to $120
+          </span>
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            RBI Rate Cut 25bps
+          </span>
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            US Recession Fear
+          </span>
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            China Market Crash
+          </span>
+          <span class="quick-chip"
+            onclick="document.getElementById('event-input').value=this.textContent">
+            Rupee hits 90
+          </span>
+        </div>
+        <textarea id="event-input"
+          placeholder="e.g. Fed raises interest rates by 50bps&#10;e.g. Oil prices spike to $120&#10;e.g. RBI cuts repo rate"
+          style="width:100%;background:var(--bg-base);border:1px solid var(--border-lit);
+            color:var(--text-pri);padding:10px;border-radius:6px;font-family:var(--font);
+            font-size:0.85rem;resize:vertical;min-height:70px;outline:none;
+            transition:border-color 0.2s"
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='var(--border-lit)'"></textarea>
+        <button class="port-add-btn" style="margin-top:10px"
+          onclick="analyzeEvent()">
+          ⚡ Analyze Market Impact
+        </button>
+        <div id="event-analysis" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ask AI Anything -->
+  <div class="panel">
+    <div class="panel-header">💬 Ask AI About Markets</div>
+    <div style="padding:16px">
+      <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:10px">
+        Ask any question about markets, stocks, or economy
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <span class="quick-chip"
+          onclick="document.getElementById('ai-question').value=this.textContent">
+          Should I buy NIFTY now?
+        </span>
+        <span class="quick-chip"
+          onclick="document.getElementById('ai-question').value=this.textContent">
+          Best sectors for 2026?
+        </span>
+        <span class="quick-chip"
+          onclick="document.getElementById('ai-question').value=this.textContent">
+          Is gold a good investment now?
+        </span>
+        <span class="quick-chip"
+          onclick="document.getElementById('ai-question').value=this.textContent">
+          Impact of US tariffs on India?
+        </span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="ai-question"
+          placeholder="Ask anything about markets..."
+          style="flex:1;background:var(--bg-base);border:1px solid var(--border-lit);
+            color:var(--text-pri);padding:9px 14px;border-radius:6px;
+            font-family:var(--font);font-size:0.85rem;outline:none"
+          onkeydown="if(event.key==='Enter') askAI()"
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='var(--border-lit)'"/>
+        <button class="port-add-btn" style="width:auto;padding:9px 20px"
+          onclick="askAI()">
+          Ask AI
+        </button>
+      </div>
+      <div id="ai-answer" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+</div>
+<!-- ── PAGE: PROBABILITY ──────────────────────────────────────────────── -->
+<div class="page" id="page-probability">
+  <div class="page-title">🎯 Probability & Volatility Dashboard</div>
+
+  <!-- Top Row: Breadth + VIX -->
+  <div class="two-col" style="margin-bottom:14px">
+
+    <div class="panel">
+      <div class="panel-header">🌡️ Market Breadth</div>
+      <div id="breadth-panel">
+        <div style="padding:30px;text-align:center;color:var(--text-dim)">Loading...</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">⚡ Volatility Index (VIX Proxy)</div>
+      <div id="vix-panel">
+        <div style="padding:30px;text-align:center;color:var(--text-dim)">Loading...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Asset selector -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      📊 Asset Analysis
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="quick-chip active-chip"
+          onclick="selectProbAsset('NIFTY 50', this)">NIFTY 50</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('Sensex', this)">Sensex</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('S&P 500', this)">S&P 500</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('Gold', this)">Gold</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('Crude Oil WTI', this)">Crude Oil</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('Bitcoin', this)">Bitcoin</span>
+        <span class="quick-chip"
+          onclick="selectProbAsset('USD/INR', this)">USD/INR</span>
+      </div>
+    </div>
+
+    <!-- Expected Move -->
+    <div style="padding:16px">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--accent);
+        letter-spacing:0.5px;margin-bottom:12px">
+        📐 EXPECTED MOVE RANGES
+      </div>
+      <div id="expected-move-cards" class="three-col" style="margin-bottom:0"></div>
+    </div>
+
+    <!-- Support Resistance -->
+    <div style="padding:0 16px 16px">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--accent);
+        letter-spacing:0.5px;margin-bottom:12px">
+        🎯 SUPPORT & RESISTANCE LEVELS
+      </div>
+      <div id="sr-levels"></div>
+    </div>
+
+  </div>
+
+  <!-- Trend + Volatility -->
+  <div class="two-col">
+
+    <div class="panel">
+      <div class="panel-header">📈 Trend Analysis</div>
+      <div id="trend-panel"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">📊 All Assets Volatility Ranking</div>
+      <div id="vol-ranking"></div>
+    </div>
+
+  </div>
+</div>
+<!-- ── PAGE: QUANT SIGNALS ───────────────────────────────────────────── -->
+<div class="page" id="page-quant">
+  <div class="page-title">🧮 Quantitative Signals Engine</div>
+
+  <!-- Asset Selector -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      🎯 Select Asset for Deep Analysis
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="quick-chip active-chip"
+          onclick="selectQuantAsset('NIFTY 50','^NSEI',this)">
+          NIFTY 50
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('Sensex','^BSESN',this)">
+          Sensex
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('S&P 500','^GSPC',this)">
+          S&P 500
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('Gold','GC=F',this)">
+          Gold
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('Crude Oil WTI','CL=F',this)">
+          Crude Oil
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('Bitcoin','bitcoin',this)">
+          Bitcoin
+        </span>
+        <span class="quick-chip"
+          onclick="selectQuantAsset('USD/INR','INR=X',this)">
+          USD/INR
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Signal Cards -->
+  <div id="quant-signal-cards"
+    style="display:grid;grid-template-columns:repeat(4,1fr);
+           gap:12px;margin-bottom:14px"></div>
+
+  <!-- Z-Score + Momentum -->
+  <div class="two-col" style="margin-bottom:14px">
+    <div class="panel">
+      <div class="panel-header">📊 Z-Score Mean Reversion</div>
+      <div id="quant-zscore"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">🚀 Momentum Analysis</div>
+      <div id="quant-momentum"></div>
+    </div>
+  </div>
+
+  <!-- Kelly + Drawdown -->
+  <div class="two-col" style="margin-bottom:14px">
+    <div class="panel">
+      <div class="panel-header">🎲 Kelly Criterion & Position Sizing</div>
+      <div id="quant-kelly"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">📉 Drawdown Analysis</div>
+      <div id="quant-drawdown"></div>
+    </div>
+  </div>
+
+  <!-- Volatility Regime + Multi RSI -->
+  <div class="two-col" style="margin-bottom:14px">
+    <div class="panel">
+      <div class="panel-header">🌡️ Volatility Regime Detector</div>
+      <div id="quant-volregime"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">📡 Multi-Timeframe RSI Confluence</div>
+      <div id="quant-multirsi"></div>
+    </div>
+  </div>
+
+  <!-- Monte Carlo -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      🎯 Monte Carlo Simulation
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="mc-days"
+          style="background:var(--bg-base);border:1px solid var(--border);
+            color:var(--text-pri);padding:4px 8px;border-radius:4px;
+            font-size:0.78rem">
+          <option value="10">10 Days</option>
+          <option value="30" selected>30 Days</option>
+          <option value="60">60 Days</option>
+          <option value="90">90 Days</option>
+        </select>
+        <button class="btn-icon" onclick="runMonteCarlo()">
+          ▶ Run Simulation
+        </button>
+      </div>
+    </div>
+    <div id="quant-montecarlo">
+      <div style="padding:30px;text-align:center;color:var(--text-dim)">
+        Click "Run Simulation" to see 500 possible price paths
+      </div>
+    </div>
+  </div>
+
+  <!-- Pairs Trading -->
+  <div class="panel">
+    <div class="panel-header">
+      ⚖️ Pairs Trading Scanner
+      <button class="btn-icon" onclick="loadPairsTrading()">
+        🔄 Scan Pairs
+      </button>
+    </div>
+    <div id="quant-pairs">
+      <div style="padding:20px;color:var(--text-dim)">
+        Click "Scan Pairs" to find diverged correlated assets
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- ── PAGE: TECHNICAL SCANNER ───────────────────────────────────────── -->
+<div class="page" id="page-technical">
+  <div class="page-title">📡 Advanced Technical Scanner</div>
+
+  <!-- Scan Results Table -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      🔍 All Assets — Technical Score Ranking
+      <button class="btn-icon" onclick="loadTechnicalScan()">
+        🔄 Refresh Scan
+      </button>
+    </div>
+    <div id="tech-scan-table">
+      <div style="padding:30px;text-align:center;
+        color:var(--text-dim)">
+        ⏳ Loading technical scan...
+      </div>
+    </div>
+  </div>
+
+  <!-- Deep Analysis -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      🔬 Deep Technical Analysis
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="quick-chip active-chip"
+          onclick="loadTechnicalDetail('^NSEI',this)">
+          NIFTY 50
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('^BSESN',this)">
+          Sensex
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('^GSPC',this)">
+          S&P 500
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('GC=F',this)">
+          Gold
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('CL=F',this)">
+          Crude Oil
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('bitcoin',this)">
+          Bitcoin
+        </span>
+        <span class="quick-chip"
+          onclick="loadTechnicalDetail('INR=X',this)">
+          USD/INR
+        </span>
+      </div>
+    </div>
+
+    <!-- Overall Score -->
+    <div id="tech-score-banner"
+      style="padding:16px;border-bottom:1px solid var(--border)">
+    </div>
+
+    <!-- Indicators Grid -->
+    <div class="two-col" style="padding:14px;gap:14px">
+
+      <div>
+        <!-- MACD -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">📊 MACD</div>
+          <div id="tech-macd"></div>
+        </div>
+
+        <!-- Bollinger Bands -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">📉 Bollinger Bands</div>
+          <div id="tech-bollinger"></div>
+        </div>
+
+        <!-- Supertrend -->
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">🔥 Supertrend</div>
+          <div id="tech-supertrend"></div>
+        </div>
+      </div>
+
+      <div>
+        <!-- RSI Divergence -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">📡 RSI Divergence</div>
+          <div id="tech-divergence"></div>
+        </div>
+
+        <!-- Stochastic -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">⚡ Stochastic</div>
+          <div id="tech-stochastic"></div>
+        </div>
+
+        <!-- ATR -->
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;
+            color:var(--accent);letter-spacing:0.5px;
+            margin-bottom:8px">📏 ATR & Stop Loss</div>
+          <div id="tech-atr"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fibonacci -->
+    <div style="padding:0 14px 14px">
+      <div style="font-size:0.75rem;font-weight:700;
+        color:var(--accent);letter-spacing:0.5px;
+        margin-bottom:8px">🌀 Fibonacci Retracement</div>
+      <div id="tech-fibonacci"></div>
+    </div>
+
+    <!-- Candlestick Patterns -->
+    <div style="padding:0 14px 14px">
+      <div style="font-size:0.75rem;font-weight:700;
+        color:var(--accent);letter-spacing:0.5px;
+        margin-bottom:8px">🕯️ Candlestick Patterns</div>
+      <div id="tech-patterns"></div>
+    </div>
+
+  </div>
+</div>
+<!-- ── PAGE: SCREENER ─────────────────────────────────────────────────── -->
+<div class="page" id="page-screener">
+  <div class="page-title">🔍 Asset Screener</div>
+
+  <!-- Filters -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">⚙️ Filters</div>
+    <div class="screener-filters">
+
+      <!-- Asset Type -->
+      <div class="filter-group">
+        <label>Asset Type</label>
+        <select id="scr-type" onchange="applyScreener()">
+          <option value="all">All Assets</option>
+          <option value="indian_index">🇮🇳 Indian Markets</option>
+          <option value="global_index">🌍 Global Markets</option>
+          <option value="commodity">🛢️ Commodities</option>
+          <option value="forex">💱 Forex</option>
+          <option value="crypto">₿ Crypto</option>
+          <option value="bond">📈 Bonds</option>
+        </select>
+      </div>
+
+      <!-- Trend -->
+      <div class="filter-group">
+        <label>Trend</label>
+        <select id="scr-trend" onchange="applyScreener()">
+          <option value="all">All Trends</option>
+          <option value="STRONG BULL">🚀 Strong Bullish</option>
+          <option value="BULLISH">📈 Bullish</option>
+          <option value="NEUTRAL">➡️ Neutral</option>
+          <option value="BEARISH">📉 Bearish</option>
+          <option value="STRONG BEAR">🔻 Strong Bearish</option>
+        </select>
+      </div>
+
+      <!-- Signal -->
+      <div class="filter-group">
+        <label>Signal</label>
+        <select id="scr-signal" onchange="applyScreener()">
+          <option value="all">All Signals</option>
+          <option value="BUY">✅ Buy</option>
+          <option value="WATCH">👀 Watch</option>
+          <option value="HOLD">⏸️ Hold</option>
+          <option value="CAUTION">⚠️ Caution</option>
+          <option value="SELL">🚨 Sell</option>
+        </select>
+      </div>
+
+      <!-- RSI -->
+      <div class="filter-group">
+        <label>RSI Zone</label>
+        <select id="scr-rsi" onchange="applyScreener()">
+          <option value="all">All RSI</option>
+          <option value="overbought">Overbought (>70)</option>
+          <option value="oversold">Oversold (<30)</option>
+          <option value="neutral">Neutral (30-70)</option>
+        </select>
+      </div>
+
+      <!-- Change % -->
+      <div class="filter-group">
+        <label>Min Change %</label>
+        <select id="scr-change" onchange="applyScreener()">
+          <option value="0">Any Change</option>
+          <option value="0.5">±0.5%+</option>
+          <option value="1">±1%+</option>
+          <option value="2">±2%+</option>
+          <option value="3">±3%+</option>
+        </select>
+      </div>
+
+      <!-- Sort -->
+      <div class="filter-group">
+        <label>Sort By</label>
+        <select id="scr-sort" onchange="applyScreener()">
+          <option value="change_pct">% Change</option>
+          <option value="rsi">RSI</option>
+          <option value="volatility">Volatility</option>
+          <option value="price">Price</option>
+        </select>
+      </div>
+
+      <!-- Reset -->
+      <div class="filter-group" style="align-self:flex-end">
+        <button class="port-add-btn" onclick="resetScreener()"
+          style="background:var(--bg-card);color:var(--text-sec);
+          border:1px solid var(--border)">
+          🔄 Reset
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quick Preset Buttons -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="filter-btn" onclick="presetScreener('gainers')">
+      🚀 Top Gainers
+    </button>
+    <button class="filter-btn" onclick="presetScreener('losers')">
+      📉 Top Losers
+    </button>
+    <button class="filter-btn" onclick="presetScreener('oversold')">
+      💚 Oversold (RSI &lt; 30)
+    </button>
+    <button class="filter-btn" onclick="presetScreener('overbought')">
+      🔴 Overbought (RSI &gt; 70)
+    </button>
+    <button class="filter-btn" onclick="presetScreener('volatile')">
+      ⚡ Most Volatile
+    </button>
+    <button class="filter-btn" onclick="presetScreener('bullish')">
+      📈 Bullish Trend
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div class="panel">
+    <div class="panel-header">
+      📊 Screener Results
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="scr-count" style="font-size:0.78rem;
+          color:var(--text-dim);font-weight:400">-- assets</span>
+        <button class="btn-icon" onclick="exportCSV()">
+          📥 Export CSV
+        </button>
+      </div>
+    </div>
+    <div id="screener-table">
+      <div style="padding:40px;text-align:center;color:var(--text-dim)">
+        Loading screener data...
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- ── PAGE: WATCHLIST ────────────────────────────────────────────────── -->
+<div class="page" id="page-watchlist">
+  <div class="page-title">⭐ Watchlist & Alerts</div>
+
+  <!-- Add to Watchlist Form -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">➕ Add to Watchlist</div>
+    <div class="port-form">
+      <div class="port-form-group">
+        <label>Symbol</label>
+        <input type="text" id="wl-symbol"
+          placeholder="e.g. RELIANCE, TCS, AAPL"
+          onblur="wlAutoFetch()"/>
+      </div>
+      <div class="port-form-group">
+        <label>Name</label>
+        <input type="text" id="wl-name"
+          placeholder="e.g. Reliance Industries"/>
+      </div>
+      <div class="port-form-group">
+        <label>Asset Type</label>
+        <select id="wl-type">
+          <option value="indian_index">🇮🇳 Indian Stock</option>
+          <option value="global_index">🌍 US Stock</option>
+          <option value="crypto">₿ Crypto</option>
+          <option value="commodity">🛢️ Commodity</option>
+          <option value="forex">💱 Forex</option>
+        </select>
+      </div>
+      <div class="port-form-group">
+        <label>Alert Above (₹)</label>
+        <input type="number" id="wl-above"
+          placeholder="Price target above" step="0.01"/>
+      </div>
+      <div class="port-form-group">
+        <label>Alert Below (₹)</label>
+        <input type="number" id="wl-below"
+          placeholder="Price target below" step="0.01"/>
+      </div>
+      <div class="port-form-group">
+        <label>Notes</label>
+        <input type="text" id="wl-notes"
+          placeholder="Your reason for watching..."/>
+      </div>
+      <div class="port-form-group" style="align-self:flex-end">
+        <button class="port-add-btn" onclick="addToWatchlist()">
+          ⭐ Add to Watchlist
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick add chips -->
+    <div style="padding:0 16px 16px">
+      <div style="font-size:0.75rem;color:var(--text-dim);
+        margin-bottom:8px">QUICK ADD:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${['RELIANCE','TCS','INFY','HDFCBANK',
+           'ICICIBANK','SBIN','ZOMATO','ADANIENT',
+           'TATAMOTORS','BAJFINANCE'].map(s =>
+          `<span class="quick-chip"
+            onclick="wlPrefill('${s}.NS','${s}')">
+            ${s}
+          </span>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Alerts Banner -->
+  <div id="wl-alerts-banner" style="margin-bottom:14px"></div>
+
+  <!-- Watchlist Table -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">
+      ⭐ Your Watchlist
+      <button class="btn-icon" onclick="loadWatchlist()">
+        🔄 Refresh Prices
+      </button>
+    </div>
+    <div id="wl-table">
+      <div style="padding:40px;text-align:center;color:var(--text-dim)">
+        No assets in watchlist yet. Add some above ☝️
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Alert Modal (hidden) -->
+  <div id="wl-edit-modal" style="display:none;position:fixed;
+    top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);
+    z-index:1000;display:none;align-items:center;justify-content:center">
+    <div style="background:var(--bg-panel);border:1px solid var(--border-lit);
+      border-radius:12px;padding:24px;width:400px;max-width:90vw">
+      <div style="font-size:1rem;font-weight:700;color:var(--accent);
+        margin-bottom:16px">✏️ Edit Alerts</div>
+      <input type="hidden" id="edit-wl-id"/>
+      <div class="port-form-group" style="margin-bottom:12px">
+        <label>Alert Above (₹)</label>
+        <input type="number" id="edit-above" step="0.01"
+          placeholder="Price target above"/>
+      </div>
+      <div class="port-form-group" style="margin-bottom:12px">
+        <label>Alert Below (₹)</label>
+        <input type="number" id="edit-below" step="0.01"
+          placeholder="Price target below"/>
+      </div>
+      <div class="port-form-group" style="margin-bottom:16px">
+        <label>Notes</label>
+        <input type="text" id="edit-notes"
+          placeholder="Your notes..."/>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="port-add-btn" onclick="saveWatchlistEdit()">
+          💾 Save
+        </button>
+        <button class="port-add-btn"
+          style="background:var(--bg-card);color:var(--text-sec);
+          border:1px solid var(--border)"
+          onclick="closeEditModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert History -->
+  <div class="panel">
+    <div class="panel-header">
+      🔔 Alert History
+      <button class="btn-icon" onclick="loadAlertHistory()">
+        🔄 Refresh
+      </button>
+    </div>
+    <div id="alert-history-list">
+      <div style="padding:20px;color:var(--text-dim);font-size:0.85rem">
+        No alerts triggered yet.
+      </div>
+    </div>
+  </div>
+
+</div>
+      <!-- ── PAGE: PORTFOLIO ────────────────────────────────────────────────── -->
+    <div class="page" id="page-portfolio">
+      <div class="page-title">💼 Portfolio Tracker</div>
+
+      <!-- Summary Cards -->
+      <div class="port-summary" id="port-summary">
+        <div class="port-card">
+          <div class="port-card-label">Total Invested</div>
+          <div class="port-card-value" id="port-invested">₹--</div>
+        </div>
+        <div class="port-card">
+          <div class="port-card-label">Current Value</div>
+          <div class="port-card-value" id="port-value">₹--</div>
+        </div>
+        <div class="port-card">
+          <div class="port-card-label">Total P&L</div>
+          <div class="port-card-value" id="port-pnl">₹--</div>
+        </div>
+        <div class="port-card">
+          <div class="port-card-label">Return %</div>
+          <div class="port-card-value" id="port-pct">--%</div>
+        </div>
+      </div>
+
+      <!-- Add Holding Form -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header">➕ Add Holding</div>
+        <div class="port-form">
+          <div class="port-form-group">
+            <label>Stock Symbol</label>
+            <input type="text" id="port-symbol"
+              placeholder="e.g. RELIANCE.NS, TCS.NS, AAPL, BTC-USD"/>
+          </div>
+          <div class="port-form-group">
+            <label>Name</label>
+            <input type="text" id="port-name"
+              placeholder="e.g. Reliance Industries"/>
+          </div>
+          <div class="port-form-group">
+            <label>Quantity</label>
+            <input type="number" id="port-qty"
+              placeholder="e.g. 10" min="0" step="0.01"/>
+          </div>
+          <div class="port-form-group">
+            <label>Buy Price (₹ or $)</label>
+            <input type="number" id="port-price"
+              placeholder="e.g. 2450.50" min="0" step="0.01"/>
+          </div>
+          <div class="port-form-group">
+            <label>Asset Type</label>
+            <select id="port-type">
+              <option value="stock">🇮🇳 Indian Stock</option>
+              <option value="us_stock">🌍 US Stock</option>
+              <option value="crypto">₿ Crypto</option>
+              <option value="etf">📦 ETF/Index Fund</option>
+              <option value="gold">🥇 Gold</option>
+              <option value="other">📌 Other</option>
+            </select>
+          </div>
+          <div class="port-form-group" style="align-self:flex-end">
+            <button class="port-add-btn" onclick="addHolding()">
+              ➕ Add to Portfolio
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick add Indian stocks -->
+        <div style="padding:0 16px 16px">
+          <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px">
+            QUICK ADD POPULAR STOCKS:
+          </div>
+          <div id="quick-add" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+      <!-- Holdings Table -->
+      <div class="panel">
+        <div class="panel-header">
+          📊 Your Holdings
+          <button class="btn-icon" onclick="loadPortfolio()" style="font-size:0.78rem">
+            🔄 Refresh P&L
+          </button>
+        </div>
+        <div id="port-holdings">
+          <div style="padding:40px;text-align:center;color:var(--text-dim)">
+            No holdings yet. Add your first stock above ☝️
+          </div>
+        </div>
+      </div>
+
+      <!-- Sector Breakdown -->
+      <div class="two-col" style="margin-top:14px">
+        <div class="panel">
+          <div class="panel-header">🥧 Asset Allocation</div>
+          <div id="port-allocation"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🏆 Best & Worst Performers</div>
+          <div id="port-performers"></div>
+        </div>
+      </div>
+
+</div>
+
+    </main>
+  </div>
+</div>
+<div class="port-form-group">
+  <label>Stock Symbol</label>
+  <input type="text" id="port-symbol"
+    placeholder="e.g. RELIANCE, TCS, AAPL, BTC-USD"
+    onblur="autoFetchName()"/>
+</div>
+    <div class="timeframe-bar">
+      <button class="tf-btn" onclick="loadChartWithPeriod('tv-nifty', currentChartSymbol['tv-nifty']||'^NSEI','5d','5m','india')">5D</button>
+      <button class="tf-btn" onclick="loadChartWithPeriod('tv-nifty', currentChartSymbol['tv-nifty']||'^NSEI','1mo','1h','india')">1M</button>
+      <button class="tf-btn active" onclick="loadChartWithPeriod('tv-nifty', currentChartSymbol['tv-nifty']||'^NSEI','3mo','1d','india')">3M</button>
+      <button class="tf-btn" onclick="loadChartWithPeriod('tv-nifty', currentChartSymbol['tv-nifty']||'^NSEI','1y','1d','india')">1Y</button>
+      <button class="tf-btn" onclick="loadChartWithPeriod('tv-nifty', currentChartSymbol['tv-nifty']||'^NSEI','5y','1wk','india')">5Y</button>
+    </div>
+    <div class="quick-symbols" id="india-quick"></div>
+  </div>
+  <div id="tv-nifty" style="height:500px"></div>
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
