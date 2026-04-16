@@ -1,2 +1,7 @@
 backend/.env
 backend/financial_data.db
+.env
+__pycache__/
+*.pyc
+*.db
+.vscode/
